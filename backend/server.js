@@ -1,3 +1,5 @@
+require('dotenv').config(); // 👈 Load .env before anything else
+
 const express = require('express');
 const cors = require('cors');
 
@@ -20,12 +22,11 @@ const sampleHeadlines = [
 // POST /business-data
 app.post('/business-data', (req, res) => {
   const { name, location } = req.body;
-  
+
   if (!name || !location) {
     return res.status(400).json({ error: 'Name and location are required' });
   }
 
-  // Simulate data
   const rating = (Math.random() * 1.5 + 3.5).toFixed(1);
   const reviews = Math.floor(Math.random() * 200) + 50;
   const headline = sampleHeadlines[0].replace('{name}', name).replace('{location}', location);
@@ -40,12 +41,11 @@ app.post('/business-data', (req, res) => {
 // GET /regenerate-headline
 app.get('/regenerate-headline', (req, res) => {
   const { name, location } = req.query;
-  
+
   if (!name || !location) {
     return res.status(400).json({ error: 'Name and location are required' });
   }
 
-  // Pick random headline
   const randomIndex = Math.floor(Math.random() * sampleHeadlines.length);
   const headline = sampleHeadlines[randomIndex]
     .replace('{name}', name)
@@ -54,6 +54,7 @@ app.get('/regenerate-headline', (req, res) => {
   res.json({ headline });
 });
 
+// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
