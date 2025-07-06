@@ -9,10 +9,10 @@ const businessReducer = (state, action) => {
     case 'SET_BUSINESS_DATA':
       return { ...state, businessData: action.payload, loading: false };
     case 'UPDATE_HEADLINE':
-      return { 
-        ...state, 
+      return {
+        ...state,
         businessData: { ...state.businessData, headline: action.payload },
-        loading: false 
+        loading: false,
       };
     case 'SET_ERROR':
       return { ...state, error: action.payload, loading: false };
@@ -32,25 +32,28 @@ const initialState = {
 export const BusinessProvider = ({ children }) => {
   const [state, dispatch] = useReducer(businessReducer, initialState);
 
+  const API_BASE = process.env.REACT_APP_API_URL;
+
   const fetchBusinessData = async (formData) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     dispatch({ type: 'CLEAR_ERROR' });
-    
+
     try {
-      const response = await fetch('http://localhost:5000/business-data', {
+      const response = await fetch(`${API_BASE}/business-data`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch business data');
-      }
-      
+
+      if (!response.ok) throw new Error('Failed to fetch business data');
+
       const data = await response.json();
-      dispatch({ type: 'SET_BUSINESS_DATA', payload: { ...data, ...formData } });
+      dispatch({
+        type: 'SET_BUSINESS_DATA',
+        payload: { ...data, ...formData },
+      });
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: error.message });
     }
@@ -58,20 +61,20 @@ export const BusinessProvider = ({ children }) => {
 
   const regenerateHeadline = async () => {
     if (!state.businessData) return;
-    
+
     dispatch({ type: 'SET_LOADING', payload: true });
     dispatch({ type: 'CLEAR_ERROR' });
-    
+
     try {
+      const { name, location } = state.businessData;
       const response = await fetch(
-        `http://localhost:5000/regenerate-headline?name=${state.businessData.name}&location=${state.businessData.location}`
+        `${API_BASE}/regenerate-headline?name=${encodeURIComponent(
+          name
+        )}&location=${encodeURIComponent(location)}`
       );
-      //http://localhost:5000
-      
-      if (!response.ok) {
-        throw new Error('Failed to regenerate headline');
-      }
-      
+
+      if (!response.ok) throw new Error('Failed to regenerate headline');
+
       const data = await response.json();
       dispatch({ type: 'UPDATE_HEADLINE', payload: data.headline });
     } catch (error) {
