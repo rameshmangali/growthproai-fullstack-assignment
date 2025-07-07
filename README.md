@@ -1,1 +1,1 @@
-[vercel Link]=(https://growthproai-fullstack-assignment-lp.vercel.app/)
+[vercel published Link](https://growthproai-fullstack-assignment-lp.vercel.app/)
