@@ -33,6 +33,7 @@ export const BusinessProvider = ({ children }) => {
   const [state, dispatch] = useReducer(businessReducer, initialState);
 
   const API_BASE = process.env.REACT_APP_API_URL;
+  console.log('API_BASE:', API_BASE);
 
   const fetchBusinessData = async (formData) => {
     dispatch({ type: 'SET_LOADING', payload: true });
